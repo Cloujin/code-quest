@@ -1,5 +1,6 @@
 import { execFileSync, spawnSync } from "node:child_process";
 import { copyFileSync, existsSync } from "node:fs";
+import { syncAgentSkills } from "./sync-agent-skills.mjs";
 import { teamStatus } from "./team-status.mjs";
 
 const MIN_NODE_MAJOR = 24;
@@ -64,6 +65,9 @@ if (branch === "main" && dirty === "") {
   if (run("git", ["pull", "-q", "--ff-only"]) !== null) done.push("main is up to date with origin");
   else todo.push("`git pull --ff-only` on main failed. Check it by hand.");
 }
+
+const synced = syncAgentSkills();
+if (synced.length) done.push(`skills for Gemini copied to .agents/skills: ${synced.join(", ")}`);
 
 console.log("## Code Quest setup");
 for (const line of done) console.log(`- ok: ${line}`);
