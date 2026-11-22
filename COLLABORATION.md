@@ -88,6 +88,9 @@ only there.
 | no bare `--force`, no force-push of `main` | `scripts/agent-guard.mjs`, in both agents |
 | no `gh pr merge` without the other person's approval | `scripts/agent-guard.mjs`, in both agents; the human can waive it with `CODE_QUEST_ALLOW_UNAPPROVED_MERGE=1` |
 | everyone sees the open pull requests | `npm run team`, at session start in both agents |
+| short answers, long-chat warnings, a handover and a new chat at about 400k tokens | Claude: global hooks on Alex's machine. Gemini: `.gemini/hooks/before-agent.mjs` |
+| handbrake at about 600k tokens: only the handover may be written | Gemini: `.gemini/hooks/handbrake.mjs` |
+| the same skills for both agents | `.claude/skills/`, copied to `.agents/skills/` by `npm run setup`, plus `ui-craft` and `short-answers` |
 
 The ruleset is applied by the repository owner, once:
 

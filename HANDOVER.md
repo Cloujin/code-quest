@@ -47,12 +47,26 @@ What looked right and was wrong. One entry per trap: what happens, why, and how 
    `$GEMINI_PROJECT_DIR` is not expanded the same way in every Windows shell. Start Gemini from the
    repository root. Gemini also asks to trust project hooks the first time, and again whenever one
    changes.
+4. **`.agents/skills/` holds copies.** `ask-first`, `git-commit-push` and `no-inline-comments` are copied
+   there from `.claude/skills/` by `npm run setup`, because Gemini reads `.agents/skills/` and Claude
+   reads `.claude/skills/`. Edit the `.claude/` copy. `ui-craft` and `short-answers` exist only in
+   `.agents/skills/`, since Alex's Claude loads them globally.
+5. **Gemini's long-chat hooks measure context, not quota.** Gemini publishes no usage endpoint, so
+   unlike Alex's Claude handbrake, which triggers on the 5-hour plan limit, Gemini's triggers on
+   chat length. It reads the token count of the last reply from the transcript, or guesses size ÷ 4
+   when the transcript has none.
 
 ## 5. Log
 
 Newest first. One entry per change that a later reader needs the story of: what was done, what
 was verified, what was left.
 
+- **2026-11-22, chore/gemini-hooks (part 2):** Gemini now matches Claude's personal hooks. A BeforeAgent
+  hook adds short answers, long-chat warnings and the handover order. A BeforeTool handbrake applies
+  past about 600k tokens. A PreCompress notice was added, and skills went into `.agents/skills/`. Not
+  ported: the usage-limit warning and the account relay, because Gemini has no usage API and only one
+  account, and `our-stack` and `replicate-ui`, because they depend on private repositories.
+  Verified: hook cases at 50k, 250k, 450k and 650k tokens, and the handbrake allow and deny lists.
 - **2026-11-22, chore/gemini-hooks:** Gemini now has its own committed hooks in `.gemini/settings.json`:
   the standing rules and team status at session start, and `scripts/agent-guard.mjs` before every
   shell command. Claude runs the same guard. The guard blocks `--no-verify`, `core.hooksPath` changes,
