@@ -5,8 +5,8 @@ for the other person. Both of you follow the same rules.
 
 Before any work:
 
-1. Run `npm run team` and read what it prints: open pull requests, who owns them, what changed on
-   `main`.
+1. Read the team status that `.gemini/hooks/session-start.mjs` put at the top of this session. If it
+   is missing, run `npm run setup` and read what it prints. Fix every `TODO` line or tell the human.
 2. Read the rules and the collaboration protocol imported below. `CLAUDE.md` is the canonical full
    text. Read it before you commit, and read the skill files it names.
 
