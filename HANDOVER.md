@@ -33,6 +33,13 @@ Each of these was a choice. Read the reason before reversing one. Add the date a
 2. **2026-11-22, Alex: two people, one protocol.** `COLLABORATION.md` holds the rules: a draft pull
    request is a claim, and the other person must approve before a merge. `GEMINI.md` imports
    `AGENTS.md`, so Gemini and Claude read the same rules.
+3. **2026-11-22, Alex and `@itx3010`: a brand-new 3D game in Rust, on our own engine.** The game is
+   low-poly and cartoon-like, and runs as a native desktop window. It is a new game, not a port of
+   the academy. The engine is ours: renderer, scene, input and the rest are written on top of
+   `wgpu` (GPU access) and `winit` (windowing), with no game engine underneath. It lives beside the
+   current app as a Cargo workspace (`crates/engine`, `crates/game`), and the React app keeps
+   working until the game replaces it. Rust leaves our default stack because a real-time 3D game
+   with its own engine does not fit Next.js or Go.
 
 ## 4. Traps
 
