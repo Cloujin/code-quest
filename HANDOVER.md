@@ -21,6 +21,14 @@ A gamified programming academy: a React and Vite client with a sandboxed code ru
   is in `.env`, and otherwise falls back to an offline mentor.
 - `npm run dev` starts both halves. `npm run check` is the gate: it typechecks the client (root
   `tsconfig.json`) and the server (`server/tsconfig.json`), then builds the client.
+- `crates/engine/`: our Rust game engine. `app.rs` owns the window and the frame loop and calls the
+  game through the `Game` trait (`setup`, then `update` every frame). `scene.rs` holds meshes,
+  objects, the camera and the light. `mesh.rs` builds flat-shaded low-poly shapes (plane, cube, cone,
+  cylinder) from triangles, one normal per face. `renderer.rs` uploads them to the GPU with `wgpu` and
+  draws them with `toon.wgsl`, which steps the light into bands for the cartoon look.
+- `crates/game/`: the game binary. Today it is a sandbox scene. `cargo run -p game` opens it. A/D
+  orbit the camera, W/S zoom. The Rust gate is `cargo fmt --check`, `cargo clippy --all-targets -- -D
+  warnings` and `cargo test`. CI runs it as the `Game` job.
 
 ## 3. Decisions
 
@@ -33,6 +41,13 @@ Each of these was a choice. Read the reason before reversing one. Add the date a
 2. **2026-11-22, Alex: two people, one protocol.** `COLLABORATION.md` holds the rules: a draft pull
    request is a claim, and the other person must approve before a merge. `GEMINI.md` imports
    `AGENTS.md`, so Gemini and Claude read the same rules.
+3. **2026-11-22, Alex and `@itx3010`: a brand-new 3D game in Rust, on our own engine.** The game is
+   low-poly and cartoon-like, and runs as a native desktop window. It is a new game, not a port of
+   the academy. The engine is ours: renderer, scene, input and the rest are written on top of
+   `wgpu` (GPU access) and `winit` (windowing), with no game engine underneath. It lives beside the
+   current app as a Cargo workspace (`crates/engine`, `crates/game`), and the React app keeps
+   working until the game replaces it. Rust leaves our default stack because a real-time 3D game
+   with its own engine does not fit Next.js or Go.
 
 ## 4. Traps
 
@@ -55,12 +70,28 @@ What looked right and was wrong. One entry per trap: what happens, why, and how 
    unlike Alex's Claude handbrake, which triggers on the 5-hour plan limit, Gemini's triggers on
    chat length. It reads the token count of the last reply from the transcript, or guesses size ÷ 4
    when the transcript has none.
+6. **wgpu and glam move fast, and old examples no longer compile.** In `wgpu` 30,
+   `get_current_texture()` returns a `CurrentSurfaceTexture` enum instead of a `Result`, frames are
+   shown with `queue.present(frame)`, the instance takes
+   `InstanceDescriptor::new_without_display_handle_from_env()`, and pipeline layouts and vertex
+   buffers are `Option`s. In `glam` 0.34, `Mat4::look_at_rh` and `Mat4::perspective_rh` are gone. Use
+   `glam::camera::rh::view::look_at_mat4` and `glam::camera::rh::proj::directx::perspective`, which
+   gives the 0..1 depth range `wgpu` expects. Read the crate source in `~/.cargo/registry` before
+   copying from a tutorial.
+7. **Colours are written in sRGB and drawn to an sRGB surface.** The shader and the clear colour raise
+   them to the power 2.2 first. Without that, every colour looks pale and washed out.
 
 ## 5. Log
 
 Newest first. One entry per change that a later reader needs the story of: what was done, what
 was verified, what was left.
 
+- **2026-11-22, feat/rust-engine:** the start of the new game. A Cargo workspace with our engine on
+  `wgpu` 30 and `winit` 0.30, flat-shaded low-poly meshes, a toon shader with three light bands, a
+  camera and keyboard input, and a sandbox scene of trees and a spinning crate. Verified with 10 unit
+  tests (mesh faces point outward, camera projection, transforms, input), clippy with no warnings, and
+  by running the window on Windows. Rust 1.100 was installed with `winget install Rustlang.Rustup`.
+  Left: the game itself, which waits on the design questions in `NEXT_STEPS.md`.
 - **2026-11-22, chore/gemini-hooks (part 2):** Gemini now matches Claude's personal hooks. A BeforeAgent
   hook adds short answers, long-chat warnings and the handover order. A BeforeTool handbrake applies
   past about 600k tokens. A PreCompress notice was added, and skills went into `.agents/skills/`. Not
