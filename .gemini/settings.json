@@ -1,0 +1,32 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "name": "code-quest-session-start",
+            "type": "command",
+            "command": "node .gemini/hooks/session-start.mjs",
+            "timeout": 25000,
+            "description": "Standing rules and team status: open pull requests, who owns them, what changed on main"
+          }
+        ]
+      }
+    ],
+    "BeforeTool": [
+      {
+        "matcher": "run_shell_command",
+        "hooks": [
+          {
+            "name": "code-quest-agent-guard",
+            "type": "command",
+            "command": "node scripts/agent-guard.mjs",
+            "timeout": 15000,
+            "description": "Blocks --no-verify, force-pushes to main, and merging a pull request the other person has not approved"
+          }
+        ]
+      }
+    ]
+  }
+}

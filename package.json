@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit -p . && tsc -p server",
     "check": "npm run typecheck && vite build",
     "prepare": "git config core.hooksPath .githooks || true",
-    "team": "node scripts/team-status.mjs"
+    "team": "node scripts/team-status.mjs",
+    "setup": "node scripts/setup.mjs"
   },
   "keywords": [],
   "author": "",
