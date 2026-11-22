@@ -16,6 +16,18 @@ An interactive, full-stack gamified coding academy designed to transform complet
 - **Career Paths & Capstone Graduation**: 6 developer career tracks with playable missions + Capstone Project submission & Personalized Developer Graduation Report.
 - **SQLite + LocalStorage Persistence**: Built-in Node 24 `node:sqlite` backend (`data/codequest.sqlite`) synced seamlessly with browser `localStorage`.
 
+## The 3D game (in progress)
+
+The new Code Quest is a low-poly 3D game in Rust, on our own engine in `crates/engine`. It needs
+Rust (`winget install Rustlang.Rustup` on Windows, or https://rustup.rs) and, on Windows, the Visual
+Studio C++ build tools.
+
+```bash
+cargo run -p game
+```
+
+A/D orbit the camera, W/S zoom. `cargo test` runs the engine tests.
+
 ## Getting Started
 
 ```bash
