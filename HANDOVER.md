@@ -42,11 +42,37 @@ What looked right and was wrong. One entry per trap: what happens, why, and how 
    `core.hooksPath`. A clone that never runs `npm install` commits with no guard.
 2. **`.agent/` is on one machine only.** It is git-ignored. Notes the other person needs go in the pull
    request and in this file.
+3. **Gemini's project hooks run from where Gemini starts.** `.gemini/settings.json` calls
+   `node .gemini/hooks/session-start.mjs` and `node scripts/agent-guard.mjs` by relative path, because
+   `$GEMINI_PROJECT_DIR` is not expanded the same way in every Windows shell. Start Gemini from the
+   repository root. Gemini also asks to trust project hooks the first time, and again whenever one
+   changes.
+4. **`.agents/skills/` holds copies.** `ask-first`, `git-commit-push` and `no-inline-comments` are copied
+   there from `.claude/skills/` by `npm run setup`, because Gemini reads `.agents/skills/` and Claude
+   reads `.claude/skills/`. Edit the `.claude/` copy. `ui-craft` and `short-answers` exist only in
+   `.agents/skills/`, since Alex's Claude loads them globally.
+5. **Gemini's long-chat hooks measure context, not quota.** Gemini publishes no usage endpoint, so
+   unlike Alex's Claude handbrake, which triggers on the 5-hour plan limit, Gemini's triggers on
+   chat length. It reads the token count of the last reply from the transcript, or guesses size ÷ 4
+   when the transcript has none.
 
 ## 5. Log
 
 Newest first. One entry per change that a later reader needs the story of: what was done, what
 was verified, what was left.
+
+- **2026-11-22, chore/gemini-hooks (part 2):** Gemini now matches Claude's personal hooks. A BeforeAgent
+  hook adds short answers, long-chat warnings and the handover order. A BeforeTool handbrake applies
+  past about 600k tokens. A PreCompress notice was added, and skills went into `.agents/skills/`. Not
+  ported: the usage-limit warning and the account relay, because Gemini has no usage API and only one
+  account, and `our-stack` and `replicate-ui`, because they depend on private repositories.
+  Verified: hook cases at 50k, 250k, 450k and 650k tokens, and the handbrake allow and deny lists.
+- **2026-11-22, chore/gemini-hooks:** Gemini now has its own committed hooks in `.gemini/settings.json`:
+  the standing rules and team status at session start, and `scripts/agent-guard.mjs` before every
+  shell command. Claude runs the same guard. The guard blocks `--no-verify`, `core.hooksPath` changes,
+  a bare `--force`, force-pushing `main`, and `gh pr merge` on an unapproved pull request. Added
+  `npm run setup` for each new clone. Verified: guard cases by hand, `npm run setup`, the Gemini
+  session-start JSON, and `npm run check`.
 
 - **2026-11-22, chore/agent-setup:** installed groundwork v0.18.0 (rules, hooks, skills, CI and
   security workflows). Added `COLLABORATION.md`, `GEMINI.md`, `npm run team` (also run at every

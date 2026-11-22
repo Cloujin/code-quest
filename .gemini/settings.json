@@ -1,0 +1,72 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "name": "code-quest-session-start",
+            "type": "command",
+            "command": "node .gemini/hooks/session-start.mjs",
+            "timeout": 25000,
+            "description": "Standing rules and team status: open pull requests, who owns them, what changed on main"
+          }
+        ]
+      }
+    ],
+    "BeforeTool": [
+      {
+        "matcher": "run_shell_command",
+        "hooks": [
+          {
+            "name": "code-quest-agent-guard",
+            "type": "command",
+            "command": "node scripts/agent-guard.mjs",
+            "timeout": 15000,
+            "description": "Blocks --no-verify, force-pushes to main, and merging a pull request the other person has not approved"
+          }
+        ]
+      },
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "name": "code-quest-handbrake",
+            "type": "command",
+            "command": "node .gemini/hooks/handbrake.mjs",
+            "timeout": 10000,
+            "description": "Past about 600k tokens, allows only reading and writing the handover"
+          }
+        ]
+      }
+    ],
+    "BeforeAgent": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "name": "code-quest-before-agent",
+            "type": "command",
+            "command": "node .gemini/hooks/before-agent.mjs",
+            "timeout": 10000,
+            "description": "Short-answers rule, long-chat warnings, and the handover order at about 400k and 600k tokens"
+          }
+        ]
+      }
+    ],
+    "PreCompress": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "name": "code-quest-pre-compress",
+            "type": "command",
+            "command": "node .gemini/hooks/pre-compress.mjs",
+            "timeout": 5000,
+            "description": "Tells the user that compression drops detail and suggests a handover"
+          }
+        ]
+      }
+    ]
+  }
+}

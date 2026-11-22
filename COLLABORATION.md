@@ -8,11 +8,16 @@ The rules apply to both agents and to both of us at a bare terminal.
 ## 1. Before you start
 
 1. `git switch main && git pull --ff-only`. Never start new work from a stale `main`.
-2. `npm install`. The `prepare` script turns on `.githooks/` for this clone.
-3. `npm run team`. It shows what changed on `main`, every open pull request, who owns it, and
-   what is waiting for your review. Claude Code runs it at every session start. Gemini runs it
-   first, as `GEMINI.md` says.
+2. `npm run setup`, once per clone and again whenever something seems off. It checks Node, turns
+   on `.githooks/`, checks your git identity and `gh` sign-in, installs dependencies, creates
+   `.env`, and ends with the team status. Anything it cannot fix is printed as `TODO`.
+3. `npm run team` shows what changed on `main`, every open pull request, who owns it, and what is
+   waiting for your review. Both agents get it automatically at session start: Claude through
+   `.claude/settings.json`, Gemini through `.gemini/settings.json`.
 4. Read `NEXT_STEPS.md` and the newest entries in `HANDOVER.md` §5.
+
+Start Gemini from the repository root. Its hook commands are relative to where it starts. The first
+time, Gemini asks you to trust the project hooks. Say yes, and check them with `/hooks panel`.
 
 ## 2. Claim the work before you write code
 
@@ -79,7 +84,13 @@ only there.
 | the gate passes | `.github/workflows/ci.yml` on every pull request |
 | a review by the other person | the `main` ruleset, `.github/rulesets/main.json` |
 | a reviewer is asked automatically | `.github/CODEOWNERS` |
-| everyone sees the open pull requests | `npm run team`, Claude's session start |
+| no `--no-verify`, no `core.hooksPath` change | `scripts/agent-guard.mjs`, in both agents |
+| no bare `--force`, no force-push of `main` | `scripts/agent-guard.mjs`, in both agents |
+| no `gh pr merge` without the other person's approval | `scripts/agent-guard.mjs`, in both agents; the human can waive it with `CODE_QUEST_ALLOW_UNAPPROVED_MERGE=1` |
+| everyone sees the open pull requests | `npm run team`, at session start in both agents |
+| short answers, long-chat warnings, a handover and a new chat at about 400k tokens | Claude: global hooks on Alex's machine. Gemini: `.gemini/hooks/before-agent.mjs` |
+| handbrake at about 600k tokens: only the handover may be written | Gemini: `.gemini/hooks/handbrake.mjs` |
+| the same skills for both agents | `.claude/skills/`, copied to `.agents/skills/` by `npm run setup`, plus `ui-craft` and `short-answers` |
 
 The ruleset is applied by the repository owner, once:
 
