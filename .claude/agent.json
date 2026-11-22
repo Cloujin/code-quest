@@ -1,0 +1,59 @@
+{
+  "project": "Code Quest",
+  "description": "A gamified programming academy: a React and Vite client with a sandboxed code runner, and an Express API with SQLite and an AI mentor.",
+  "mainBranch": "main",
+  "overridePrefix": "CODE_QUEST",
+  "mainDeploys": false,
+  "checks": "npm run check",
+  "scopes": [
+    "web",
+    "server",
+    "curriculum",
+    "engine",
+    "docs",
+    "ci",
+    "repo"
+  ],
+  "people": null,
+  "owned": [],
+  "comments": {
+    "paths": [],
+    "extensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "mjs",
+      "cjs"
+    ],
+    "ignore": []
+  },
+  "worktree": {
+    "copy": [
+      "node_modules"
+    ],
+    "share": [
+      ".agent"
+    ]
+  },
+  "groundwork": "0.18.0",
+  "installed": {
+    ".claude/hooks/git-guard.mjs": "72bec2620a69dca7",
+    ".claude/hooks/lib/comments.mjs": "67da193bcdb70df7",
+    ".claude/hooks/lib/config.mjs": "b2d695f00a573921",
+    ".claude/hooks/lib/scaffold.mjs": "507c022d14f1846f",
+    ".claude/hooks/lib/worktree.mjs": "4c49afb6518a663e",
+    ".claude/hooks/session-end.mjs": "5cf4c4c433712cbf",
+    ".claude/hooks/session-start.mjs": "e51e546eea68bbec",
+    ".claude/hooks/worktree-ready.mjs": "fa4e59ea2cfdbbd5",
+    ".claude/hooks/write-guard.mjs": "a7c7d67236ba3883",
+    ".claude/skills/ask-first/SKILL.md": "5e8f0cf9a3b05e64",
+    ".claude/skills/git-commit-push/SKILL.md": "45af09cbf8e44a0f",
+    ".claude/skills/no-inline-comments/SKILL.md": "72fe72a58f1cae04",
+    ".githooks/commit-msg": "3c80a6daf8eaa384",
+    ".githooks/pre-commit": "918af621a8f5f7ae",
+    ".githooks/pre-push": "1dcc229a37957ee4",
+    "scripts/new-worktree.mjs": "be2a804850355d6f"
+  },
+  "offered": {}
+}
